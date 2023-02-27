@@ -2,9 +2,11 @@
 #include <stdio.h>
 
 /**
- * main - check the code 
+ * reset_to_98 - that's check the code mind blowing
  *
- * Return: Always 0.
+ *
+ * @n: is a pointer omg
+ *
  */
 void reset_to_98(int *n)
 {
