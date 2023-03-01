@@ -1,37 +1,23 @@
 #include "main.h"
-
 /**
- * _strcmp - entry point
- *
- * @s1: first string
- * @s2: decond string
- *
- * Return: 0 is s1 is equal to s2
- * neg num if s1 < s2
- * pos num if s1 > s2
- *
+ * _strcmp - compares two strings
+ * @s1: first string.
+ * @s2: second string.
+ * Return: 0 if s1 and s2 are equals,
+ * another number if not.
  */
+
 int _strcmp(char *s1, char *s2)
 {
-	int i = 0;
-	int d = 0;
+	int i = 0, op = 0;
 
-	while (1)
+	while (op == 0)
 	{
-		if (s1[i] == '\0' && s2[i] == '\0')
+		if ((*(s1 + i) == '\0') && (*(s2 + i) == '\0'))
 			break;
-		else if (s1[i] == '\0')
-		{
-			d = s2[i];
-			break;
-		}
-		else if (s1[i] != s2[i])
-		{
-			d = s1[i] - s2[i];
-			break;
-		}
-		else
-			i++;
+		op = *(s1 + i) - *(s2 + i);
+		i++;
 	}
-	return (d);
+
+	return (op);
 }
