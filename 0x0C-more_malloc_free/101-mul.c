@@ -1,137 +1,134 @@
+#include "holberton.h"
 #include <stdlib.h>
-#include "main.h"
+#include <stdio.h>
 
 /**
- * _error - prints error and exit
- * Return: void
- */
-void _error(void)
+ * _memset - fills memory with a constant byte
+ *
+ * @s: input pointer that represents memory block
+ *     to fill
+ * @b: characters to fill/set
+ * @n: number of bytes to be filled
+ *
+ * Return: pointer to the filled memory area
+*/
+
+char *_memset(char *s, char b, unsigned int n)
 {
-	char *s;
-	int i;
+	unsigned int i = 0;
 
-	s = "Error\n";
-	i = 0;
-	while (s[i] != '\0')
-		_putchar(s[i++]);
-	exit(98);
-}
-
-/**
- * _strlend - calulate length of string of digits
- * @s: string given
- * Return: length of string (int) (Success) | 98 (Failure) {exit}
- */
-int _strlend(char *s)
-{
-	int i, size;
-
-	i = 0;
-	size = 0;
-	while (s[i] != '\0')
+	while (i < n)
 	{
-		if (s[i] < 48 || s[i] > 57)
-			_error();
-		size++;
+		s[i] = b;
 		i++;
 	}
-	return (size);
-}
-
-/**
- * product - multiples two strings
- * @s1: first string
- * @s2: second string
- * @size1: size of s1
- * @size2: size of s2
- * Return: array of (s1 * s2)
- */
-char *product(char *s1, char *s2, int size1, int size2)
-{
-	char *s;
-	int i, j, *arr;
-
-	arr = malloc(sizeof(int) * (size1 + size2));
-	if (!arr)
-		_error();
-	i = 0;
-	while (i < (size2 + size1))
-		arr[i++] = 0;
-	i = size1 - 1;
-	arr[i + (size2 - 1) + 1] = 0;
-	while (i >= 0)
-	{
-		j = size2 - 1;
-		while (j >= 0)
-		{
-			arr[i + j + 1] += (s1[i] - '0') * (s2[j] - '0');
-			arr[i + j] += arr[i + j + 1] / 10;
-			arr[i + j + 1] %= 10;
-			j--;
-		}
-		i--;
-	}
-	i = 0;
-	while (i < (size1 + size2) && arr[i] == 0)
-		i++;
-	s = malloc(sizeof(char) * ((size1 + size2) + 1));
-	if (!s)
-		_error();
-	j = 0;
-	while (i < (size1 + size2))
-		s[j++] = arr[i++] + '0';
-	s[j] = '\0';
-	free(arr);
 	return (s);
 }
 
 /**
- * leading_0 - check for leading zeros
- * @s: given string
- * Return: new length (int)
- */
-int leading_0(char *s)
-{
-	int i;
+ * _calloc - function that allocates memory
+ *           for an array using memset
+ *
+ * @nmemb: size of array
+ * @size: size of each element
+ *
+ * Return: pointer to new allocated memory
+*/
 
-	i = 0;
-	while (s[0] != '\0')
-	{
-		if (s[0] != '0')
-			break;
-		i++;
-		s++;
-	}
-	return (i);
+void *_calloc(unsigned int nmemb, unsigned int size)
+{
+	char *ptr;
+
+	if (nmemb == 0 || size == 0)
+		return (NULL);
+	ptr = malloc(nmemb * size);
+	if (ptr == NULL)
+		return (NULL);
+	_memset(ptr, 0, nmemb * size);
+
+	return (ptr);
 }
 
+
 /**
- * main - printf product of two numbers
- * @argc: arguments count
- * @argv: arguments vector (array of strings)
- * Return: 0 (Success) | 98 (Failure)
- */
+ * multiply - initialize array with 0 byte
+ *
+ * @s1: string 1
+ * @s2: string 2
+ *
+ * Return: nothing
+*/
+
+void multiply(char *s1, char *s2)
+{
+	int i, l1, l2, total_l, f_digit, s_digit, res = 0, tmp;
+	char *ptr;
+	void *temp;
+
+	l1 = _length(s1);
+	l2 = _length(s2);
+	tmp = l2;
+	total_l = l1 + l2;
+	ptr = _calloc(sizeof(int), total_l);
+
+	/* store our pointer address to free later */
+	temp = ptr;
+
+	for (l1--; l1 >= 0; l1--)
+	{
+		f_digit = s1[l1] - '0';
+		res = 0;
+		l2 = tmp;
+		for (l2--; l2 >= 0; l2--)
+		{
+			s_digit = s2[l2] - '0';
+			res += ptr[l2 + l1 + 1] + (f_digit * s_digit);
+			ptr[l1 + l2 + 1] = res % 10;
+			res /= 10;
+		}
+		if (res)
+			ptr[l1 + l2 + 1] = res % 10;
+	}
+
+	while (*ptr == 0)
+	{
+		ptr++;
+		total_l--;
+	}
+
+	for (i = 0; i < total_l; i++)
+		printf("%i", ptr[i]);
+	printf("\n");
+	free(temp);
+}
+
+
+/**
+ * main - Entry point
+ *
+ * Description: a program that multiplies
+ *            two positive numbers
+ *
+ * @argc: number of arguments
+ * @argv: arguments array
+ *
+ * Return: 0 on success 98 on faliure
+*/
+
 int main(int argc, char *argv[])
 {
-	int s1, s2, i;
-	char *s;
+	char *n1 = argv[1];
+	char *n2 = argv[2];
 
-	if (argc != 3)
-		_error();
-	argv[1] += leading_0(argv[1]), argv[2] += leading_0(argv[2]);
-	s1 = _strlend(argv[1]), s2 = _strlend(argv[2]);
-	if (!s1 || !s2)
+	if (argc != 3 || check_number(n1) || check_number(n2))
+		error_exit();
+
+	if (*n1 == '0' || *n2 == '0')
 	{
 		_putchar('0');
 		_putchar('\n');
-		return (0);
 	}
-
-	s = product(argv[1], argv[2], s1, s2);
-	i = 0;
-	while (s[i] != '\0')
-		_putchar(s[i++]);
-	_putchar('\n');
-	free(s);
+	else
+		multiply(n1, n2);
 	return (0);
 }
