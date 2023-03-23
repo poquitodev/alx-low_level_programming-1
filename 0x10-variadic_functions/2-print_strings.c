@@ -1,6 +1,6 @@
 /*
  * File: 2-print_strings.c
- * Auth: Tolulope Fakunle
+ * Auth: BENRAMI EL MAHDI
  */
 
 #include "variadic_functions.h"
